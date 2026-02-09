@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Student Dashboard - IdeaHub</title>
+    <style>
+        /* --- CSS STYLES --- */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f4f7f6; display: flex; flex-direction: column; height: 100vh; }
+        
+        .navbar { background: #1e1e2f; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .logo { font-size: 1.5rem; font-weight: bold; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #8a2be2; color: white; font-weight: bold; }
+        .profile-popup { display:none; position: absolute; right: 30px; top: 60px; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 8px; padding: 10px; z-index: 200; width: 150px; }
+        .profile-popup button { display: block; width: 100%; padding: 10px; margin: 0; border: none; background: white; cursor: pointer; text-align: left; }
+        .profile-popup button:hover { background: #f0f0f0; }
+
+        .container { display: flex; flex: 1; overflow: hidden; }
+        
+        /* SIDEBAR */
+        .filter-sidebar { width: 250px; background: white; padding: 20px; border-right: 1px solid #ddd; overflow-y: auto; display: flex; flex-direction: column; flex-shrink: 0; }
+        .filter-group h4 { margin: 0 0 15px 0; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .filter-item { display: flex; align-items: center; margin-bottom: 12px; cursor: pointer; }
+        .filter-item input { margin-right: 10px; cursor: pointer; transform: scale(1.2); }
+        .filter-item label { cursor: pointer; color: #555; font-size: 0.95rem; }
+
+        /* MAIN FEED */
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; background: #f4f7f6; }
+        .search-container { margin-bottom: 20px; }
+        .search-container input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
+
+        /* CARDS */
+        .card { background:white; padding:20px; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.05); margin-bottom:20px; border-left: 5px solid #8a2be2; }
+        .card h3 { margin-top: 0; color: #333; }
+        .tag { background: #e0e0e0; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; color: #555; margin-right: 5px; }
+        .role-tag { background: #e3f2fd; color: #1565c0; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        .btn-primary { background: #8a2be2; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; transition: 0.2s; }
+        .btn-primary:hover { background: #7a26c9; }
+
+        /* MODALS */
+        .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; }
+        .modal-content { background:white; padding:25px; border-radius:12px; width:450px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .close-btn { position: absolute; top: 15px; right: 20px; cursor: pointer; font-size: 24px; color: #aaa; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #444; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+
+        /* CHAT WINDOW */
+        #chatWindow { display:none; flex-direction:column; position:fixed; bottom:20px; right:30px; width:320px; height:450px; background:white; border-radius:12px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); z-index: 2000; overflow: hidden; border: 1px solid #ddd; }
+        .chat-header { background:#8a2be2; color:white; padding:15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+        .chat-body { flex:1; overflow-y:auto; padding:15px; background: #f9f9f9; display: flex; flex-direction: column; gap: 8px; }
+        .chat-input { display:flex; border-top:1px solid #eee; padding: 10px; background: white; }
+        .chat-input input { flex:1; border:none; padding:10px; outline: none; }
+        .chat-input button { background: none; border: none; color: #8a2be2; font-weight: bold; cursor: pointer; }
+
+        .msg-student { align-self: flex-end; text-align: right; max-width: 80%; }
+        .msg-student span { background: #8a2be2; color: white; padding: 8px 12px; border-radius: 12px 12px 0 12px; display: inline-block; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .msg-dev { align-self: flex-start; text-align: left; max-width: 80%; }
+        .msg-dev span { background: #fff; color: #333; padding: 8px 12px; border-radius: 12px 12px 12px 0; display: inline-block; border: 1px solid #ddd; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">IdeaHub</div>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <button class="btn-primary" onclick="openIdeaModal()">+ Post Idea</button>
+            <div class="profile-wrapper" onclick="toggleProfilePopup(event)">
+                <div id="userAvatar" class="avatar">U</div>
+                <div id="profilePopup" class="profile-popup">
+                    <button onclick="openChat()">Messages 💬</button>
+                    <button onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <aside class="filter-sidebar">
+            <div class="filter-group">
+                <h4>Filter by Role</h4>
+                <div id="roleFilters">
+                    <p style="color:#888;">Loading filters...</p>
+                </div>
+            </div>
+            <button onclick="clearFilters()" style="margin-top:20px; background:none; border:none; color:#8a2be2; cursor:pointer; font-weight:bold;">Reset All Filters</button>
+        </aside>
+
+        <main class="main-content">
+            <div class="search-container">
+                <input type="text" id="searchBar" placeholder="Search projects..." onkeyup="filterIdeas()"/>
+            </div>
+            <div id="ideasFeed">Loading ideas...</div>
+        </main>
+    </div>
+
+    <div id="ideaModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeIdeaModal()">&times;</span>
+            <h3>Post a New Idea</h3>
+            <div class="form-group"><label>Project Title</label><input type="text" id="ideaTitle"></div>
+            <div class="form-group"><label>Category</label>
+                <select id="ideaCategory">
+                    <option>Web Development</option><option>Mobile App</option><option>AI / ML</option><option>IoT / Hardware</option><option>Blockchain</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Looking For</label><input type="text" id="ideaLooking" placeholder="e.g. Web Developer, Backend..."></div>
+            <div class="form-group"><label>Description</label><textarea id="ideaDesc" rows="4"></textarea></div>
+            <button class="btn-primary" style="width:100%" onclick="saveIdea()">Post Idea</button>
+        </div>
+    </div>
+
+    <div id="devModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeDevModal()">&times;</span>
+            <h3>Select a Developer</h3>
+            <div id="devList" style="max-height: 300px; overflow-y: auto;">
+                <p>Loading developers...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="chatWindow">
+        <div class="chat-header">
+            <span>Dev Connection 🟢</span>
+            <button onclick="closeChat()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">&times;</button>
+        </div>
+        <div id="chatBody" class="chat-body"></div>
+        <div class="chat-input">
+            <input type="text" id="chatMsg" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let allIdeas = [];
+        let selectedIdeaId = null;
+        let activeRequestId = null;
+        let activeFilters = new Set();
+        
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) window.location.href = "index.html";
+        document.getElementById("userAvatar").innerText = user.username.substring(0, 2).toUpperCase();
+
+        // 1. FETCH IDEAS (With Error Handling)
+        async function fetchIdeas() {
+            try {
+                const res = await fetch("http://127.0.0.1:8000/ideas");
+                if (!res.ok) throw new Error("Failed to fetch ideas");
+                allIdeas = await res.json();
+                
+                generateSidebarFilters(allIdeas); 
+                renderIdeas(allIdeas);
+            } catch(e) { 
+                console.error(e); 
+                document.getElementById("ideasFeed").innerHTML = "<p style='color:red'>Error loading ideas. Check backend.</p>";
+                document.getElementById("roleFilters").innerHTML = "<p>Error loading filters.</p>";
+            }
+        }
+
+        // 2. RENDER IDEAS
+        function renderIdeas(ideas) {
+            const feed = document.getElementById("ideasFeed");
+            if(ideas.length === 0) {
+                feed.innerHTML = "<p style='text-align:center; color:#888;'>No ideas found matching your criteria.</p>";
+                return;
+            }
+            feed.innerHTML = ideas.map(i => {
+                // Safety check for null values
+                const role = i.looking_for || "General";
+                return `
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:start;">
+                        <div>
+                            <h3>${i.title}</h3>
+                            <div style="margin-bottom:10px;">
+                                <span class="tag">${i.category}</span>
+                                <span class="role-tag">Looking for: ${role}</span>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="openDevList(${i.idea_id})">Connect</button>
+                    </div>
+                    <p style="color:#555; line-height:1.5;">${i.description}</p>
+                </div>
+            `}).join('');
+        }
+
+        // 3. GENERATE FILTERS (Fixed for "Loading..." issue)
+        function generateSidebarFilters(ideas) {
+            const filterContainer = document.getElementById("roleFilters");
+            
+            // 1. Extract roles safely (handle nulls)
+            const rawRoles = ideas.map(i => i.looking_for ? i.looking_for.trim() : "General");
+            
+            // 2. Get unique roles
+            const uniqueRoles = [...new Set(rawRoles)];
+
+            // 3. If no roles found
+            if (uniqueRoles.length === 0) {
+                filterContainer.innerHTML = "<p>No roles found.</p>";
+                return;
+            }
+
+            // 4. Render checkboxes
+            filterContainer.innerHTML = uniqueRoles.map(role => {
+                const safeId = role.replace(/[^a-zA-Z0-9]/g, '-'); // Sanitize ID
+                return `
+                <div class="filter-item">
+                    <input type="checkbox" id="filter-${safeId}" onchange="toggleFilter('${role.replace(/'/g, "\\'")}')">
+                    <label for="filter-${safeId}">${role}</label>
+                </div>
+            `}).join('');
+        }
+
+        function toggleFilter(role) {
+            if (activeFilters.has(role)) activeFilters.delete(role);
+            else activeFilters.add(role);
+            filterIdeas();
+        }
+
+        function clearFilters() {
+            activeFilters.clear();
+            document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+            document.getElementById("searchBar").value = "";
+            renderIdeas(allIdeas);
+        }
+
+        function filterIdeas() {
+            const query = document.getElementById("searchBar").value.toLowerCase();
+            const filtered = allIdeas.filter(i => {
+                const matchesSearch = i.title.toLowerCase().includes(query) || i.description.toLowerCase().includes(query);
+                const role = i.looking_for ? i.looking_for.trim() : "General";
+                const matchesFilter = activeFilters.size === 0 || activeFilters.has(role);
+                return matchesSearch && matchesFilter;
+            });
+            renderIdeas(filtered);
+        }
+
+        // 4. CONNECT TO DEV (Fixed "Loading..." issue)
+        async function openDevList(ideaId) {
+            selectedIdeaId = ideaId;
+            const devListDiv = document.getElementById("devList");
+            document.getElementById("devModal").style.display = "flex";
+            devListDiv.innerHTML = "<p>Loading developers...</p>"; // Reset text
+
+            try {
+                const res = await fetch("http://127.0.0.1:8000/developers");
+                if(!res.ok) throw new Error("Failed");
+                const devs = await res.json();
+                
+                if (devs.length === 0) {
+                    devListDiv.innerHTML = "<p>No developers registered yet.</p>";
+                    return;
+                }
+
+                devListDiv.innerHTML = devs.map(d => `
+                    <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; align-items:center;">
+                        <div>
+                            <div style="font-weight:bold;">${d.username}</div>
+                            <div style="color:gray; font-size:0.9rem;">${d.type}</div>
+                        </div>
+                        <button class="btn-primary" style="padding:5px 15px;" onclick="sendReq(${d.devid})">Request</button>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error(e);
+                devListDiv.innerHTML = "<p style='color:red'>Error loading developer list.</p>";
+            }
+        }
+
+        async function sendReq(devId) {
+            try {
+                const res = await fetch("http://127.0.0.1:8000/send-request", {
+                    method: "POST", headers: {"Content-Type":"application/json"},
+                    body: JSON.stringify({student_id: user.registerid, dev_id: devId, idea_id: selectedIdeaId})
+                });
+                const data = await res.json();
+                if(data.status) {
+                    alert("Request Sent!");
+                    closeDevModal();
+                } else {
+                    alert("Error: " + data.message);
+                }
+            } catch(e) { alert("Failed to send request."); }
+        }
+
+        // 5. POST IDEA
+        function openIdeaModal() { document.getElementById("ideaModal").style.display = "flex"; }
+        function closeIdeaModal() { document.getElementById("ideaModal").style.display = "none"; }
+
+        async function saveIdea() {
+            const title = document.getElementById("ideaTitle").value;
+            const desc = document.getElementById("ideaDesc").value;
+            const cat = document.getElementById("ideaCategory").value;
+            const look = document.getElementById("ideaLooking").value;
+
+            if(!title || !desc || !look) return alert("Please fill all fields");
+
+            await fetch("http://127.0.0.1:8000/ideas", {
+                method: "POST", headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({
+                    student_id: user.registerid, 
+                    project_title: title, 
+                    description: desc, 
+                    category: cat, 
+                    looking_for: look
+                })
+            });
+            closeIdeaModal();
+            fetchIdeas();
+        }
+
+        // 6. CHAT SYNC
+        setInterval(async () => {
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/check-active-chat/student/${user.registerid}`);
+                const data = await res.json();
+                
+                if(data && data.request_id) {
+                    activeRequestId = data.request_id;
+                    const chatWin = document.getElementById("chatWindow");
+                    if(chatWin.style.display !== "flex") chatWin.style.display = "flex";
+                    
+                    // Always refresh messages
+                    loadMessages();
+                }
+            } catch(e) {}
+        }, 3000);
+
+        async function loadMessages() {
+            if(!activeRequestId) return;
+            const res = await fetch(`http://127.0.0.1:8000/chat/${activeRequestId}`);
+            const msgs = await res.json();
+            
+            document.getElementById("chatBody").innerHTML = msgs.map(m => `
+                <div class="${m.sender === 'student' ? 'msg-student' : 'msg-dev'}">
+                    <span>${m.text}</span>
+                </div>
+            `).join('');
+        }
+
+        async function sendMessage() {
+            const txt = document.getElementById("chatMsg").value;
+            if(!txt) return;
+            await fetch("http://127.0.0.1:8000/chat", {
+                method: "POST", headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({request_id: activeRequestId, sender_role: 'student', message: txt})
+            });
+            document.getElementById("chatMsg").value = "";
+            loadMessages();
+        }
+
+        function toggleProfilePopup(e) { e.stopPropagation(); const p = document.getElementById("profilePopup"); p.style.display = p.style.display === "block" ? "none" : "block"; }
+        function openChat() { document.getElementById("chatWindow").style.display = "flex"; loadMessages(); }
+        function closeChat() { document.getElementById("chatWindow").style.display = "none"; }
+        function closeDevModal() { document.getElementById("devModal").style.display = "none"; }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
+
+        window.onload = fetchIdeas;
+    </script>
+</body>
+</html>

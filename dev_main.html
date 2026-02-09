@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Developer Dashboard</title>
+    <style>
+        /* --- CSS STYLES --- */
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f8; display: flex; height: 100vh; }
+        
+        /* SIDEBAR */
+        .sidebar { width: 260px; background: #1e1e2f; color: white; padding: 25px; display: flex; flex-direction: column; flex-shrink: 0; }
+        .user-info { display: flex; align-items: center; margin-bottom: 30px; }
+        .avatar { width: 50px; height: 50px; background: #8a2be2; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-right: 15px; }
+        .menu-item { color: #aaa; padding: 10px 0; cursor: pointer; border-bottom: 1px solid #333; }
+        .menu-item:hover { color: white; }
+
+        /* MAIN AREA */
+        .main { flex: 1; padding: 40px; overflow-y: auto; }
+        h1 { margin-top: 0; color: #333; }
+
+        /* REQUEST CARDS */
+        .req-card { background: white; padding: 25px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #8a2be2; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .req-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .req-details { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .req-details p { margin: 5px 0; color: #555; }
+        
+        /* BUTTONS */
+        .btn { padding: 10px 16px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
+        .btn-acc { background: #28a745; color: white; }
+        .btn-rej { background: #dc3545; color: white; margin-left: 10px; }
+        .btn-chat { background: #8a2be2; color: white; margin-left: 10px; }
+        .btn-acc:hover { background: #218838; }
+        .btn-rej:hover { background: #c82333; }
+
+        /* CHAT PANEL */
+        .chat-panel { width: 350px; background: white; border-left: 1px solid #ddd; display: none; flex-direction: column; box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
+        .chat-header { padding: 20px; background: #8a2be2; color: white; font-weight: bold; }
+        .chat-body { flex: 1; padding: 20px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
+        .chat-footer { padding: 15px; border-top: 1px solid #eee; display: flex; }
+        .chat-footer input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; outline: none; }
+        .chat-footer button { margin-left: 10px; background: #8a2be2; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+
+        /* MESSAGES */
+        .msg-dev { align-self: flex-end; text-align: right; max-width: 85%; }
+        .msg-dev span { background: #8a2be2; color: white; padding: 8px 12px; border-radius: 12px 12px 0 12px; display: inline-block; }
+        .msg-student { align-self: flex-start; text-align: left; max-width: 85%; }
+        .msg-student span { background: white; border: 1px solid #eee; color: #333; padding: 8px 12px; border-radius: 12px 12px 12px 0; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="user-info">
+        <div id="avatar" class="avatar">D</div>
+        <div>
+            <div id="devName" style="font-weight:bold; font-size:1.1rem;">Dev</div>
+            <div style="font-size:0.8rem; color:#aaa;">Developer Console</div>
+        </div>
+    </div>
+    <div class="menu-item" onclick="loadRequests()">Requests & Projects</div>
+    <button onclick="logout()" style="margin-top:auto; padding:12px; background:#ff4d4d; color:white; border:none; border-radius:5px; cursor:pointer; width:100%;">Logout</button>
+</div>
+
+<main class="main">
+    <h1>Incoming Requests</h1>
+    <div id="requestList">
+        <p>Loading requests...</p>
+    </div>
+</main>
+
+<aside id="devChatBox" class="chat-panel">
+    <div class="chat-header">Chat with Student</div>
+    <div id="msgList" class="chat-body"></div>
+    <div class="chat-footer">
+        <input type="text" id="replyText" placeholder="Type a reply...">
+        <button onclick="sendReply()">Send</button>
+    </div>
+</aside>
+
+<script>
+    // 1. CHECK LOGIN
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+        alert("Please login first.");
+        window.location.href = "developer.html";
+    } else {
+        document.getElementById("avatar").innerText = user.username.substring(0, 2).toUpperCase();
+        document.getElementById("devName").innerText = user.username;
+    }
+
+    let activeRequestId = null;
+    let chatInterval = null;
+
+    // 2. LOAD REQUESTS (The "Loading" Fix)
+    async function loadRequests() {
+        const list = document.getElementById("requestList");
+
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/dev/requests/${user.devid}`);
+            
+            // Check if backend sent a valid response
+            if (!res.ok) {
+                throw new Error("Server error");
+            }
+
+            const data = await res.json();
+
+            // Handle Empty List
+            if (!Array.isArray(data) || data.length === 0) {
+                list.innerHTML = "<p style='color:#777; font-size:1.1rem;'>No pending requests at the moment.</p>";
+                return;
+            }
+
+            // Render Requests
+            list.innerHTML = data.map(r => `
+                <div class="req-card">
+                    <div class="req-header">
+                        <h3 style="margin:0;">${r.project_title}</h3>
+                        <span style="font-size:0.9rem; font-weight:bold; color:${r.status === 'accepted' ? '#28a745' : '#ffc107'}">${r.status.toUpperCase()}</span>
+                    </div>
+                    <div class="req-details">
+                        <p><strong>Student Name:</strong> ${r.student_name}</p>
+                        <p><strong>Student Email:</strong> ${r.student_email}</p>
+                        <p><strong>Project Description:</strong> ${r.project_desc}</p>
+                    </div>
+                    
+                    <div style="display:flex; justify-content:flex-end;">
+                        ${r.status === 'pending' ? `
+                            <button class="btn btn-acc" onclick="respond(${r.request_id}, 'accepted')">Accept Request</button>
+                            <button class="btn btn-rej" onclick="respond(${r.request_id}, 'rejected')">Reject</button>
+                        ` : ''}
+
+                        ${r.status === 'accepted' ? `
+                            <button class="btn btn-chat" onclick="openChat(${r.request_id})">Open Chat</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (error) {
+            console.error(error);
+            list.innerHTML = `<p style='color:red;'>Error loading requests. Please check your connection.</p>`;
+        }
+    }
+
+    // 3. RESPOND TO REQUEST
+    async function respond(reqId, status) {
+        try {
+            const res = await fetch("http://127.0.0.1:8000/update-request", {
+                method: "POST", headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({request_id: reqId, status: status})
+            });
+            const result = await res.json();
+            if(result.status) {
+                loadRequests(); // Refresh the list immediately
+            } else {
+                alert("Failed to update status.");
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    // 4. CHAT FUNCTIONS
+    function openChat(reqId) {
+        activeRequestId = reqId;
+        document.getElementById("devChatBox").style.display = "flex";
+        loadMessages();
+        
+        // Clear previous timer and start a new one
+        if(chatInterval) clearInterval(chatInterval);
+        chatInterval = setInterval(loadMessages, 3000);
+    }
+
+    async function loadMessages() {
+        if(!activeRequestId) return;
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/chat/${activeRequestId}`);
+            const msgs = await res.json();
+            
+            document.getElementById("msgList").innerHTML = msgs.map(m => `
+                <div class="${m.sender === 'developer' ? 'msg-dev' : 'msg-student'}">
+                    <span>${m.text}</span>
+                </div>
+            `).join('');
+        } catch(e) { console.error("Chat Error", e); }
+    }
+
+    async function sendReply() {
+        const txt = document.getElementById("replyText").value;
+        if(!txt) return;
+        try {
+            await fetch("http://127.0.0.1:8000/chat", {
+                method: "POST", headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({request_id: activeRequestId, sender_role: 'developer', message: txt})
+            });
+            document.getElementById("replyText").value = "";
+            loadMessages();
+        } catch(e) { alert("Message failed to send"); }
+    }
+
+    function logout() { localStorage.clear(); window.location.href = "developer.html"; }
+    
+    // 5. AUTO REFRESH REQUESTS
+    setInterval(loadRequests, 5000); // Check for new requests every 5 seconds
+    window.onload = loadRequests;
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Developer Login</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
+        .container { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #8a2be2; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; font-weight: bold; }
+        button:hover { background: #7a26c9; }
+        .toggle { margin-top: 15px; color: #8a2be2; cursor: pointer; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="loginForm">
+        <h2>Developer Login</h2>
+        <input type="email" id="l_email" placeholder="Email">
+        <input type="password" id="l_pass" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <span class="toggle" onclick="toggle()">New here? Register</span>
+    </div>
+
+    <div class="container" id="regForm" style="display:none;">
+        <h2>Dev Registration</h2>
+        <input type="text" id="r_name" placeholder="Username">
+        <input type="email" id="r_email" placeholder="Email">
+        <input type="password" id="r_pass" placeholder="Password">
+        <select id="r_type">
+            <option value="Web Developer">Web Developer</option>
+            <option value="App Developer">App Developer</option>
+            <option value="AI/ML Engineer">AI/ML Engineer</option>
+            <option value="Database Engineer">Database Engineer</option>
+        </select>
+        <button onclick="register()">Register</button>
+        <span class="toggle" onclick="toggle()">Already have an account? Login</span>
+    </div>
+
+    <script>
+        function toggle() {
+            const l = document.getElementById("loginForm");
+            const r = document.getElementById("regForm");
+            if (l.style.display === "none") { l.style.display = "block"; r.style.display = "none"; }
+            else { l.style.display = "none"; r.style.display = "block"; }
+        }
+
+        async function login() {
+            const email = document.getElementById("l_email").value;
+            const password = document.getElementById("l_pass").value;
+
+            const res = await fetch("http://127.0.0.1:8000/dev/login", {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await res.json();
+
+            if (data.status) {
+                // CRITICAL FIX: Save the ENTIRE data object (which includes devid)
+                localStorage.setItem("user", JSON.stringify(data)); 
+                window.location.href = "dev_main.html";
+            } else {
+                alert(data.message);
+            }
+        }
+
+        async function register() {
+            const username = document.getElementById("r_name").value;
+            const email = document.getElementById("r_email").value;
+            const password = document.getElementById("r_pass").value;
+            const type = document.getElementById("r_type").value;
+
+            const res = await fetch("http://127.0.0.1:8000/dev/signup", {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, email, password, which_dev: type })
+            });
+
+            const data = await res.json();
+            if (data.status) {
+                alert("Registered! Please login.");
+                toggle();
+            } else {
+                alert(data.message);
+            }
+        }
+    </script>
+</body>
+</html>

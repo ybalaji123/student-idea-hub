@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Project Idea Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
+
+    <div class="login-box">
+        <img src="cam_logo.png" alt="IdeaHub Logo" class="auth-logo">
+        
+        <div id="loginForm" class="form active">
+            <h2>Student Login</h2>
+            <div class="form-group">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="loginPass" placeholder="Password" required>
+            </div>
+            <button class="btn btn-primary" onclick="submitLogin()">Login</button>
+            <p>Don't have an account? <span class="toggle-link" onclick="toggleForms()">Sign Up</span></p>
+            <p style="margin-top: 10px;"><a href="index.html" class="toggle-link">Back to Home</a></p>
+        </div>
+        
+        <div id="signupForm" class="form">
+            <h2>Join the Hub</h2>
+            <div class="form-group">
+                <input type="text" id="signupUsername" placeholder="Full Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="signupEmail" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="signupPass" placeholder="Password" required>
+            </div>
+            <button class="btn btn-primary" onclick="submitSignup()">Sign Up</button>
+            <p>Already have an account? <span class="toggle-link" onclick="toggleForms()">Login</span></p>
+            <p style="margin-top: 10px;"><a href="index.html" class="toggle-link">Back to Home</a></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

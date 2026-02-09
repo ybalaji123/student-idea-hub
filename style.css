@@ -1,0 +1,561 @@
+/* --- Global Resets --- */
+:root {
+    --primary: #9932cc; /* BlueViolet */
+    --primary-hover: #8a2be2; /* DarkOrchid */
+    --light-bg: #f8f9fa;
+    --text-dark: #333;
+    --text-light: #666;
+    --white: #ffffff;
+    --border: #e0e0e0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--light-bg);
+    color: var(--text-dark);
+}
+
+a { text-decoration: none; color: inherit; }
+
+
+.main-logo {
+    height: 80px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    margin-bottom: 25px;
+    display: block;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    filter: brightness(1);
+}
+
+/* --- Buttons --- */
+.btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-outline:hover {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+/* --- Navigation (Shared) --- */
+.navbar {
+    background-color: var(--white);
+    padding: 1rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- LANDING PAGE (index.html) --- */
+.hero {
+    padding: 80px 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #fdfbfd 0%, #e6e6fa 100%);
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    max-width: 700px;
+    margin: 0 auto 2rem;
+}
+
+.stats-container {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    margin-top: 50px;
+}
+
+.stat-box h3 { font-size: 2rem; color: var(--primary); }
+
+.steps-section {
+    padding: 60px 5%;
+    background-color: var(--white);
+    text-align: center;
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.step-card {
+    padding: 30px;
+    border-radius: 10px;
+    background: var(--light-bg);
+    transition: transform 0.3s;
+}
+
+.step-card:hover { transform: translateY(-5px); }
+
+/* --- DASHBOARD (main.html) --- */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 250px 1fr; /* Sidebar + Content */
+    gap: 30px;
+}
+
+/* Sidebar */
+.sidebar {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 10px;
+    height: fit-content;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.sidebar h3 { margin-bottom: 15px; color: var(--text-dark); }
+
+.filter-group { margin-bottom: 20px; }
+
+.filter-option {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+.filter-option:hover { color: var(--primary); }
+
+/* Feed Area */
+.feed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-right: 20px;
+}
+
+/* Project Cards */
+.project-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid transparent;
+    transition: all 0.3s;
+}
+
+.project-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.15);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.card-title { font-size: 1.25rem; font-weight: bold; }
+.card-time { font-size: 0.85rem; color: #999; }
+
+.card-desc {
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.tech-stack {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.tech-badge {
+    background-color: #f3e5f5;
+    color: var(--primary);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    padding-top: 15px;
+}
+
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.avatar {
+    width: 30px;
+    height: 30px;
+    background-color: #ddd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+}
+
+/* --- AUTH PAGE (auth.html) - FIXED LOGO --- */
+.auth-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--light-bg); /* Ensure background matches main theme */
+}
+
+/* The white box containing the forms */
+.login-box {
+    width: 100%;
+    max-width: 400px; /* Ensures the box doesn't get too wide */
+    padding: 40px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+/* HERE IS THE FIX FOR THE LOGO */
+.auth-logo {
+    height: 80px; /* Define the height of the "rectangle" space */
+    width: auto;  /* Allow width to adjust automatically */
+    max-width: 100%; /* Ensure it doesn't overflow horizontally */
+    object-fit: contain; /* Ensures the image doesn't stretch or squish */
+    margin-bottom: 25px; /* Spacing between logo and the form title */
+    display: block;
+    margin-left: auto; /* Center horizontally */
+    margin-right: auto; /* Center horizontally */
+}
+
+.form-group { margin-bottom: 15px; }
+.form-group input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px; }
+.form { display: none; }
+.form h2 { margin-bottom: 20px; color: var(--text-dark); }
+.form.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+.toggle-link { color: var(--primary); cursor: pointer; font-weight: 600; }
+.form p { margin-top: 15px; color: var(--text-light); font-size: 0.9rem; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- PRACTICAL HOW IT WORKS SECTION (FIXED ALIGNMENT) --- */
+
+.steps-section {
+    padding: 80px 20px;
+    background-color: var(--white);
+}
+
+.section-subtitle {
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: 80px;
+    margin-top: -10px;
+    font-size: 1.1rem;
+}
+
+/* This container fixes the width issues */
+.steps-container {
+    max-width: 1000px; /* Limits width so it looks neat */
+    margin: 0 auto;    /* Centers the whole block */
+    display: flex;
+    flex-direction: column;
+    gap: 100px;        /* Consistent spacing between rows */
+}
+
+.step-row {
+    display: flex;
+    align-items: center; /* Vertically centers text with image */
+    justify-content: space-between;
+    gap: 60px;
+}
+
+/* Reverses the layout for the 2nd item (Text Right, Visual Left) */
+.step-row.reverse {
+    flex-direction: row-reverse;
+}
+
+/* --- TEXT SIDE --- */
+.step-text {
+    flex: 1; /* Takes up 50% of the space */
+    padding-right: 20px;
+}
+
+.step-row.reverse .step-text {
+    padding-right: 0;
+    padding-left: 20px;
+}
+
+.step-number {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #f3e5f5; /* Very light violet */
+    line-height: 1;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.step-text h3 {
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.step-text p {
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-size: 1.05rem;
+}
+
+.practical-list {
+    list-style: none;
+    margin-left: 5px;
+}
+
+.practical-list li {
+    margin-bottom: 12px;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.text-link {
+    color: var(--primary);
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* --- VISUAL SIDE (MOCK UPS) --- */
+.step-visual {
+    flex: 1; /* Takes up 50% of the space */
+    display: flex;
+    justify-content: center; /* Centers the card inside its half */
+    align-items: center;
+}
+
+/* Common Card Styles for Mockups */
+.mock-card, .mock-profile-card, .mock-kanban {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08); /* Soft shadow */
+    border: 1px solid #eee;
+    transition: transform 0.3s ease;
+}
+
+.step-visual:hover .mock-card,
+.step-visual:hover .mock-profile-card,
+.step-visual:hover .mock-kanban {
+    transform: translateY(-5px); /* Slight lift effect */
+}
+
+/* Specific: Form Mockup */
+.mock-card {
+    width: 280px;
+    padding: 25px;
+}
+.mock-header { font-weight: bold; margin-bottom: 15px; color: #333; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; }
+.mock-line { height: 10px; background: #f0f0f0; margin-bottom: 10px; border-radius: 5px; }
+.mock-tags { display: flex; gap: 8px; margin: 20px 0; }
+.mock-tag { font-size: 11px; background: #f3e5f5; color: var(--primary); padding: 5px 10px; border-radius: 15px; font-weight: 600; }
+.mock-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 10px; border-radius: 6px; margin-top: 10px; font-weight: 600; }
+
+/* Specific: Profile Mockup */
+.mock-profile-card {
+    width: 280px;
+    padding: 25px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.mock-avatar { width: 60px; height: 60px; background: #4CAF50; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
+.mock-msg { font-style: italic; font-size: 0.9rem; color: #555; margin: 15px 0; background: #f9f9f9; padding: 12px; border-radius: 8px; width: 100%; border: 1px solid #eee; }
+.mock-actions { display: flex; gap: 10px; width: 100%; }
+.btn-accept { flex: 1; background: var(--primary); color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; }
+.btn-decline { flex: 1; background: transparent; color: #999; border: 1px solid #ddd; padding: 8px; border-radius: 6px; }
+
+/* Specific: Kanban Mockup */
+.mock-kanban {
+    width: 320px;
+    padding: 20px;
+    display: flex;
+    gap: 15px;
+    background: white;
+}
+.kanban-col { background: #f8f9fa; padding: 15px; border-radius: 8px; flex: 1; }
+.kanban-col span { font-weight: 700; font-size: 0.8rem; display: block; margin-bottom: 15px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+.kanban-item { background: white; padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #333; border: 1px solid #eee; }
+.kanban-col.active { background: #f3e5f5; border: 1px dashed var(--primary); }
+
+/* --- RESPONSIVE (MOBILE) --- */
+@media (max-width: 768px) {
+    .step-row, .step-row.reverse {
+        flex-direction: column; /* Stack vertically on phone */
+        text-align: center;
+        gap: 40px;
+    }
+    
+    .step-text {
+        padding: 0;
+    }
+
+    .practical-list {
+        display: inline-block;
+        text-align: left;
+    }
+    
+    .step-number {
+        margin-left: 0;
+        font-size: 2.5rem;
+    }
+
+    .mock-card, .mock-profile-card, .mock-kanban {
+        width: 100%; /* Full width on mobile */
+        max-width: 300px;
+    }
+}
+
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  width: 400px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.idea-form input,
+.idea-form textarea,
+.idea-form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button.student {
+
+    padding: 3px;
+    margin:violet;
+    background-color: #8a2be2;
+    color:white;
+    background-color: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    width: 150px;
+    border-radius: 5px;
+}
+    
+
+button.student:hover {
+    background-color: var(--primary);
+    color: var(--white);
+}
+button.developer {
+    padding:3px;
+    margin:violet;
+    background-color: #8a2be2;
+    color:white;
+    background-color: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    width: 150px;
+    border-radius: 5px;
+}
+button.developer:hover {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+
