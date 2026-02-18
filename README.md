@@ -1,0 +1,1 @@
+Student Idea Hub is a web platform that helps students share project ideas and find collaborators. Users can post ideas, explore projects by category or skills, and connect with peers. The platform promotes teamwork, innovation, and practical learning among students.
