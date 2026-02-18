@@ -1,4 +1,4 @@
-const API_URL = "https://student-idea-hub.onrender.com";
+const API_URL = "https://student-idea-hub-1.onrender.com";
 
 // --- GLOBAL STATE ---
 let currentUser = JSON.parse(localStorage.getItem("user"));
