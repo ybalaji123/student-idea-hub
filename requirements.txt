@@ -3,5 +3,6 @@ uvicorn
 psycopg2-binary
 pydantic
 passlib[bcrypt]
+bcrypt
 tomli
 requests

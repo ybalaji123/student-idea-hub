@@ -118,28 +118,34 @@ def signup(user: UserSignup):
 
 @app.post("/auth/login")
 def login(creds: UserLogin):
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM users WHERE email=%s", (creds.email,))
-    user = cur.fetchone()
-    cur.close(); conn.close()
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users WHERE email=%s", (creds.email,))
+        user = cur.fetchone()
+        cur.close(); conn.close()
 
-    if not user or not verify_password(creds.password, user["password_hash"]):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-    return {
-        "user": {
-            "id": user["id"],
-            "full_name": user["full_name"],
-            "email": user["email"],
-            "role": user["role"],
-            "skills": user["skills"],
-            "bio": user["bio"],
-            "portfolio_links": user["portfolio_links"],
-            "avatar_url": user["avatar_url"],
-            "phone_number": user["phone_number"]
+        if not user or not verify_password(creds.password, user["password_hash"]):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+        return {
+            "user": {
+                "id": user["id"],
+                "full_name": user["full_name"],
+                "email": user["email"],
+                "role": user["role"],
+                "skills": user["skills"],
+                "bio": user["bio"],
+                "portfolio_links": user["portfolio_links"],
+                "avatar_url": user["avatar_url"],
+                "phone_number": user["phone_number"]
+            }
         }
-    }
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        print(f"Login Error: {e}")
+        raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
 
 @app.get("/users")
 def get_users(role: Optional[str] = None, skill: Optional[str] = None):
