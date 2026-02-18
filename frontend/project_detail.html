@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details | IdeaHub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .project-header {
+            background: linear-gradient(to right, #2a2a2a, #1e1e1e);
+            padding: 40px;
+            border-bottom: 1px solid var(--border);
+            border-radius: 12px 12px 0 0;
+            position: relative;
+        }
+
+        .project-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-top: 20px;
+            padding: 0 40px;
+            background: #1e1e1e;
+        }
+
+        .tab {
+            padding: 15px 5px;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .kanban-board {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        .kanban-col {
+            background: #181818;
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 250px;
+            flex: 1;
+        }
+
+        .kanban-title {
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+        }
+
+        .task-card {
+            background: #2a2a2a;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .task-card:hover {
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar (Same as Main) -->
+        <nav class="sidebar">
+            <div class="brand">IdeaHub</div>
+            <ul class="nav-links">
+                <li><a href="main.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Feed</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content" style="padding: 0;">
+            <div id="projectLoading" style="padding: 40px; text-align: center;">Loading Project...</div>
+
+            <div id="projectContainer" style="display: none;">
+                <!-- Header -->
+                <div class="project-header">
+                    <div class="project-meta">
+                        <span id="dtStage" class="badge">Idea</span>
+                        <span id="dtDomain"><i class="fas fa-globe"></i> Web</span>
+                        <span id="dtOwner"><i class="fas fa-user"></i> Owner</span>
+                    </div>
+                    <h1 id="dtTitle" style="font-size: 2.5rem; margin-bottom: 15px;">Project Title</h1>
+                    <div id="dtTags" class="tech-stack"></div>
+
+                    <div style="margin-top: 20px;">
+                        <button id="btnAction" class="btn btn-primary" onclick="openModal('applyModal')">Apply to
+                            Join</button>
+                        <button id="btnMsgOwner" class="btn btn-secondary" style="display:none; margin-left: 10px;"><i
+                                class="fas fa-envelope"></i> Message Owner</button>
+                        <button id="btnEdit" class="btn btn-secondary" onclick="openEditModal()"
+                            style="display:none; margin-left: 10px;"><i class="fas fa-edit"></i> Edit</button>
+                        <button id="btnDelete" class="btn btn-danger" onclick="deleteProject()"
+                            style="display:none; margin-left: 10px; background-color: var(--danger); color: white; border: none;"><i
+                                class="fas fa-trash"></i> Delete</button>
+                        <a id="lnkRepo" href="#" target="_blank" class="btn btn-secondary"
+                            style="display:none; margin-left: 10px;"><i class="fab fa-github"></i> Repository</a>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('overview')">Overview</div>
+                    <div class="tab" onclick="switchTab('team')">Team</div>
+                    <div class="tab" onclick="switchTab('tasks')">Tasks</div>
+                    <div class="tab" onclick="switchTab('chat')">Team Chat</div>
+                </div>
+
+                <!-- Content -->
+                <div id="tab-overview" class="tab-content active">
+                    <h3>Description</h3>
+                    <p id="dtDesc" style="color: #ccc; line-height: 1.6; max-width: 800px; margin-top: 10px;"></p>
+
+                    <h3 style="margin-top: 30px;">Looking For</h3>
+                    <div id="dtRoles" style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
+                </div>
+
+                <div id="tab-team" class="tab-content">
+                    <h3>Project Members</h3>
+                    <div id="teamList" class="feed-grid" style="margin-top: 20px;"></div>
+                </div>
+
+                <div id="tab-tasks" class="tab-content">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                        <h3>Kanban Board</h3>
+                        <button class="btn btn-primary btn-sm" onclick="openModal('taskModal')"><i
+                                class="fas fa-plus"></i> New Task</button>
+                    </div>
+                    <div class="kanban-board">
+                        <div class="kanban-col" id="col-todo">
+                            <div class="kanban-title">To Do <span id="count-todo">0</span></div>
+                            <div id="list-todo"></div>
+                        </div>
+                        <div class="kanban-col" id="col-progress">
+                            <div class="kanban-title" style="color: var(--secondary)">In Progress <span
+                                    id="count-progress">0</span></div>
+                            <div id="list-progress"></div>
+                        </div>
+                        <div class="kanban-col" id="col-done">
+                            <div class="kanban-title" style="color: var(--success)">Done <span id="count-done">0</span>
+                            </div>
+                            <div id="list-done"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Tab -->
+                <div id="tab-chat" class="tab-content">
+                    <div class="chat-container box-shadow"
+                        style="height: 500px; display: flex; flex-direction: column; background: #1e1e2f; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
+                        <div id="chatMessages"
+                            style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                            <div style="text-align: center; color: #777;">Loading chat...</div>
+                        </div>
+                        <div
+                            style="padding: 15px; background: #252530; display: flex; gap: 10px; border-top: 1px solid var(--border);">
+                            <input type="text" id="chatInput" class="form-control" placeholder="Type a message..."
+                                style="margin-bottom: 0;" onkeydown="if(event.key==='Enter') sendChatMessage()">
+                            <button class="btn btn-primary" onclick="sendChatMessage()"><i
+                                    class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Applications Section (Owner Only) -->
+                <div id="ownerAppsSection" style="margin-top: 40px; display: none;">
+                    <h3>Pending Applications</h3>
+                    <div id="appList" style="display: grid; gap: 15px; margin-top: 15px;">
+                        <!-- Apps go here -->
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Apply Modal -->
+    <div id="applyModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Apply to Join</h3>
+                <button class="close-modal" onclick="closeModal('applyModal')">&times;</button>
+            </div>
+            <textarea id="appMsg" class="form-control" placeholder="Why are you a good fit?"></textarea>
+            <div class="form-group" style="margin-top: 15px;">
+                <label class="form-label">Role</label>
+                <select id="appRole" class="form-control"></select>
+            </div>
+            <button class="btn btn-primary" onclick="submitApplication()">Send Application</button>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div id="taskModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Task</h3><button class="close-modal" onclick="closeModal('taskModal')">&times;</button>
+            </div>
+            <input id="tTitle" class="form-control" placeholder="Task Title" style="margin-bottom: 10px;">
+            <select id="tStatus" class="form-control" style="margin-bottom: 10px;">
+                <option>To Do</option>
+                <option>In Progress</option>
+                <option>Done</option>
+            </select>
+            <button class="btn btn-primary" onclick="addTask()">Add</button>
+        </div>
+    </div>
+
+    <!-- Edit Project Modal -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content" style="width: 600px;">
+            <div class="modal-header">
+                <h3>Edit Project</h3>
+                <button class="close-modal" onclick="closeModal('editModal')">&times;</button>
+            </div>
+            <form onsubmit="event.preventDefault(); submitEditProject()">
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" id="eTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="eDesc" class="form-control" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Domain</label>
+                    <select id="eDomain" class="form-control">
+                        <option>Web</option>
+                        <option>Mobile</option>
+                        <option>AI/ML</option>
+                        <option>Game</option>
+                        <option>IoT</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Stage</label>
+                    <select id="eStage" class="form-control">
+                        <option>Idea</option>
+                        <option>Prototype</option>
+                        <option>MVP</option>
+                        <option>Scale</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Repository Link</label>
+                    <input type="url" id="eRepo" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Action Successful</div>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Hub | Student Idea Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="brand">
+                <img src="cam_logo.png" alt="Logo" style="height: 32px; margin-right: 10px;">
+                <span>IdeaHub</span>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active" onclick="loadFeed('all')"><i class="fas fa-th-large"></i>
+                        Feed</a></li>
+                <li><a href="main.html" class="nav-link" onclick="loadFeed('my')"><i class="fas fa-folder-open"></i> My
+                        Projects</a></li>
+                <li><a href="developers.html" class="nav-link"><i class="fas fa-users"></i> Find Talent</a></li>
+                <li><a href="messages.html" class="nav-link"><i class="fas fa-envelope"></i> Messages</a></li>
+                <li><a href="#" class="nav-link"><i class="fas fa-calendar-alt"></i> Events</a></li>
+            </ul>
+
+            <div style="margin-top: auto;">
+                <div class="nav-link" id="userProfileDisplay">
+                    <div class="avatar"></div>
+                    <span id="userNameDisplay">Loading...</span>
+                </div>
+                <button onclick="logout()" class="btn btn-secondary btn-sm" style="width: 100%; margin-top: 10px;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header-bar">
+                <input type="text" class="search-input" placeholder="Search ideas, tags, or people..."
+                    oninput="handleSearch(this.value)">
+
+                <button class="btn btn-primary" onclick="openModal('postProjectModal')">
+                    <i class="fas fa-plus"></i> Post Project
+                </button>
+            </header>
+
+            <div id="feedGrid" class="feed-grid">
+                <!-- Projects will be loaded here -->
+                <div style="color: var(--text-muted); text-align: center; grid-column: 1/-1; padding: 50px;">
+                    <i class="fas fa-circle-notch fa-spin fa-2x"></i><br><br>Loading Community Feed...
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Post Project Modal -->
+    <div id="postProjectModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-rocket" style="color: var(--secondary);"></i> Launch New Project</h3>
+                <button class="close-modal" onclick="closeModal('postProjectModal')">&times;</button>
+            </div>
+
+            <form id="postProjectForm" onsubmit="handlePostProject(event)">
+                <div class="form-group">
+                    <label class="form-label">Project Title</label>
+                    <input type="text" id="pTitle" class="form-control" placeholder="e.g. AI-Powered Study Assistant"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Elevator Pitch (Description)</label>
+                    <textarea id="pDesc" class="form-control" placeholder="Describe the problem and your solution..."
+                        required></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">Domain</label>
+                        <select id="pDomain" class="form-control">
+                            <option>Web Development</option>
+                            <option>Mobile App</option>
+                            <option>AI / Cloud</option>
+                            <option>IoT / Hardware</option>
+                            <option>Blockchain</option>
+                            <option>Game Dev</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Difficulty</label>
+                        <select id="pDifficulty" class="form-control">
+                            <option>Beginner Friendly</option>
+                            <option>Intermediate</option>
+                            <option>Advanced</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tags (comma separated)</label>
+                    <input type="text" id="pTags" class="form-control" placeholder="e.g. Python, React, NLP">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Looking For (comma separated roles)</label>
+                    <input type="text" id="pRoles" class="form-control" placeholder="e.g. Frontend Dev, UI Designer">
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Post to Feed</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Action Successful</div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

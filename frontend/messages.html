@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages | Student Idea Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .messenger-container {
+            display: flex;
+            height: calc(100vh - 100px);
+            background: #181920;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .contacts-list {
+            width: 300px;
+            background: #15151e;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contacts-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+        }
+
+        .contact-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .contact-item:hover,
+        .contact-item.active {
+            background: rgba(138, 43, 226, 0.1);
+        }
+
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #333;
+            flex-shrink: 0;
+            object-fit: cover;
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e2f;
+        }
+
+        .chat-header {
+            padding: 15px 25px;
+            background: #15151e;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .messages-box {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: #2a2a35;
+            color: #eee;
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: #15151e;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="brand">
+                <img src="cam_logo.png" alt="Logo" style="height: 32px; margin-right: 10px;">
+                <span>IdeaHub</span>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="main.html" class="nav-link"><i class="fas fa-th-large"></i> Feed</a></li>
+                <li><a href="main.html" class="nav-link"><i class="fas fa-folder-open"></i> My Projects</a></li>
+                <li><a href="developers.html" class="nav-link"><i class="fas fa-users"></i> Find Talent</a></li>
+                <li><a href="messages.html" class="nav-link active"><i class="fas fa-envelope"></i> Messages</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="messenger-container">
+                <!-- Contacts List -->
+                <div class="contacts-list" id="contactsList">
+                    <div class="contacts-header">Recent Messages</div>
+                    <div id="contactsLoading" style="padding:20px; color:#777;">Loading...</div>
+                </div>
+
+                <!-- Chat Area -->
+                <div class="chat-area">
+                    <div class="chat-header" id="chatHeader" style="display:none;">
+                        <img id="activeAvatar" class="contact-avatar" src="">
+                        <div style="flex:1;">
+                            <h3 id="activeName" style="margin:0; font-size:1.1rem;">User Name</h3>
+                            <span id="activeRole" class="badge"
+                                style="background:#333; color:#aaa; font-size:0.7rem;">Role</span>
+                        </div>
+                        <a id="waLink" href="#" target="_blank" class="btn btn-sm"
+                            style="display:none; background:#25D366; color:white; border:none; padding: 8px 15px; border-radius: 6px; text-decoration: none; font-weight: 600;"><i
+                                class="fab fa-whatsapp"></i> WhatsApp</a>
+                    </div>
+
+                    <div class="messages-box" id="messagesBox">
+                        <div class="empty-state">
+                            <i class="far fa-paper-plane"></i>
+                            <h3>Select a conversation to start chatting</h3>
+                        </div>
+                    </div>
+
+                    <div class="chat-input" id="chatInputArea" style="display:none;">
+                        <input type="text" id="msgInput" class="form-control" placeholder="Type a message..."
+                            onkeydown="if(event.key==='Enter') sendMessage()">
+                        <button class="btn btn-primary" onclick="sendMessage()"><i
+                                class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let currentChatUser = null;
+        let currentUser = JSON.parse(localStorage.getItem("user"));
+        if (!currentUser) window.location.href = 'index.html';
+
+        // Check for URL param to start chat immediately
+        const urlParams = new URLSearchParams(window.location.search);
+        const startUserId = urlParams.get('user');
+
+        window.onload = async () => {
+            await loadContacts();
+            if (startUserId) {
+                // If starting new chat, fetch user details and open
+                openChat(parseInt(startUserId));
+            }
+        };
+
+        async function loadContacts() {
+            try {
+                const res = await fetch(`${API_URL}/messages/conversations/list?user_id=${currentUser.id}`);
+                const contacts = await res.json();
+
+                const list = document.getElementById('contactsList');
+                // Remove loading
+                if (document.getElementById('contactsLoading')) document.getElementById('contactsLoading').remove();
+
+                list.innerHTML = '<div class="contacts-header">Recent Messages</div>' + contacts.map(c => `
+                    <div class="contact-item ${currentChatUser === c.id ? 'active' : ''}" onclick="openChat(${c.id}, '${c.full_name}', '${c.role}', '${c.avatar_url || ''}', '${c.phone_number || ''}')">
+                        <img src="${c.avatar_url || 'https://ui-avatars.com/api/?name=' + c.full_name}" class="contact-avatar">
+                        <div>
+                            <div style="font-weight:600;">${c.full_name}</div>
+                            <div style="font-size:0.8rem; color:#888;">${c.last_message ? (c.last_message.substring(0, 25) + '...') : ''}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function openChat(userId, name, role, avatar, phone) {
+            currentChatUser = userId;
+
+            // Update UI immediately if details provided, otherwise fetch
+            if (!name) {
+                // Fetch user info simple fallback (could be optimized)
+                const res = await fetch(`${API_URL}/users`);
+                const all = await res.json();
+                const u = all.find(x => x.id === userId);
+                if (u) {
+                    name = u.full_name;
+                    role = u.role;
+                    avatar = u.avatar_url;
+                    phone = u.phone_number;
+                }
+            }
+
+            // Update Header
+            document.getElementById('chatHeader').style.display = 'flex';
+            document.getElementById('chatInputArea').style.display = 'flex';
+            document.getElementById('activeName').innerText = name;
+            document.getElementById('activeRole').innerText = role;
+            document.getElementById('activeAvatar').src = avatar || `https://ui-avatars.com/api/?name=${name}`;
+
+            // WhatsApp Logic
+            const waBtn = document.getElementById('waLink');
+            if (phone) {
+                waBtn.style.display = 'inline-flex';
+                waBtn.href = `https://wa.me/${phone}`;
+
+                // If this was triggered via direct link (e.g. "Message Owner") and they have whatsapp, 
+                // we can optionally auto-open it or just highlight it.
+                // User requirement: "clicking on the chat open the chat" -> implying WhatsApp if available?
+                // Or simply ensuring the chat UI is active.
+                // Assuming they want the platform chat to be open and ready.
+            } else {
+                waBtn.style.display = 'none';
+            }
+
+            // Highlight active in list
+            document.querySelectorAll('.contact-item').forEach(el => el.classList.remove('active'));
+            // Note: properly matching by ID in DOM would be better but simple re-render of list works too
+
+            loadMessages(userId);
+        }
+
+        async function loadMessages(otherId) {
+            const box = document.getElementById('messagesBox');
+            box.innerHTML = '<div style="text-align:center; padding:20px; color:#777;">Loading...</div>';
+
+            try {
+                const res = await fetch(`${API_URL}/messages/${otherId}?user_id=${currentUser.id}`);
+                const msgs = await res.json();
+
+                if (msgs.length === 0) {
+                    box.innerHTML = '<div class="empty-state"><i class="far fa-comments"></i><p>No messages yet. Say hi!</p></div>';
+                    return;
+                }
+
+                box.innerHTML = msgs.map(m => `
+                    <div class="message ${m.sender_id === currentUser.id ? 'sent' : 'received'}">
+                        ${m.message}
+                    </div>
+                `).join('');
+                box.scrollTop = box.scrollHeight;
+            } catch (e) {
+                box.innerHTML = 'Error loading messages';
+            }
+        }
+
+        async function sendMessage() {
+            const txt = document.getElementById('msgInput').value;
+            if (!txt || !currentChatUser) return;
+
+            try {
+                const res = await fetch(`${API_URL}/messages?user_id=${currentUser.id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ receiver_id: currentChatUser, message: txt })
+                });
+
+                if (res.ok) {
+                    document.getElementById('msgInput').value = '';
+                    loadMessages(currentChatUser); // Refresh chat
+                    // Optional: Refresh contact list to show new last message
+                }
+            } catch (e) {
+                alert("Failed to send");
+            }
+        }
+    </script>
+</body>
+
+</html>

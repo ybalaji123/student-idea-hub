@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>My Workspace | IdeaHub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="brand">IdeaHub</div>
+            <ul class="nav-links">
+                <li><a href="main.html" class="nav-link"><i class="fas fa-th-large"></i> Feed</a></li>
+                <li><a href="#" class="nav-link active"><i class="fas fa-tasks"></i> My Workspace</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <h2 style="margin-bottom: 30px;">My Workspace</h2>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+                <!-- Active Tasks -->
+                <div>
+                    <h3 style="margin-bottom: 20px; color: var(--text-muted);">Active Tasks</h3>
+                    <div id="myTasks" class="feed-grid" style="grid-template-columns: 1fr;">
+                        Loading...
+                    </div>
+                </div>
+
+                <!-- Applications -->
+                <div>
+                    <h3 style="margin-bottom: 20px; color: var(--text-muted);">My Applications</h3>
+                    <div id="myApps">
+                        Loading...
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Page Specific Logic
+        window.onload = async function () {
+            if (!currentUser) window.location.href = 'index.html';
+
+            // 1. Fetch My Applications
+            const resApp = await fetch(`${API_URL}/users/${currentUser.id}/applications`);
+            const apps = await resApp.json();
+
+            document.getElementById('myApps').innerHTML = apps.map(a => `
+                <div class="project-card" style="padding: 15px; margin-bottom: 15px;">
+                    <strong>${a.project_title}</strong><br>
+                    <small>Role: ${a.role_applied_for}</small><br>
+                    <div style="margin-top:5px;">
+                        <span class="badge" style="background:${a.status === 'Accepted' ? 'var(--success)' : a.status === 'Rejected' ? 'var(--danger)' : '#444'}">${a.status}</span>
+                    </div>
+                </div>
+            `).join('') || "No applications yet.";
+
+            // 2. Fetch Assigned Tasks (Mocking for now as we didn't make a specific endpoint for 'my tasks' but can infer or add one)
+            // For now, let's just show a placeholder or we'd need to add GET /users/{id}/tasks to backend
+            document.getElementById('myTasks').innerHTML = `
+                <div class="project-card">
+                    <p style="color:var(--text-muted);">Tasks assigned to you will appear here.</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+
+</html>

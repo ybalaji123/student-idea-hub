@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Idea Hub - Innovate Together</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Landing Specific Overrides */
+        body {
+            display: block;
+            overflow-x: hidden;
+            background: #0a0a0f;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo {
+            height: 40px;
+        }
+
+        .nav-brand {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, #1e1e2f 0%, #0a0a0f 70%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(138, 43, 226, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(138, 43, 226, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.2;
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 900px;
+            padding: 20px;
+            margin-top: 60px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(138, 43, 226, 0.2);
+            color: #d4aaff;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #fff 0%, #a0a0ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pulse-btn {
+            animation: pulseGlow 2s infinite;
+        }
+
+        .features {
+            padding: 100px 5%;
+            background: #0f0f14;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(138, 43, 226, 0.3);
+        }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: rgba(138, 43, 226, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+
+        /* Handled by style.css modal classes */
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar" style="animation: fadeIn 1s ease-out;">
+        <div class="logo-container">
+            <img src="cam_logo.png" alt="Logo" class="nav-logo">
+            <span class="nav-brand">Student Idea Hub</span>
+        </div>
+        <div class="nav-actions">
+            <button class="btn btn-secondary btn-sm" onclick="openModal('loginModal')">Log In</button>
+            <button class="btn btn-primary btn-sm" onclick="openModal('signupModal')">Sign Up</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-badge" style="animation: slideUp 0.8s ease-out;">🚀 The #1 Platform for Student Builders
+            </div>
+            <h1 style="animation: slideUp 0.8s ease-out 0.1s backwards;">Where Student Ideas <br><span
+                    class="gradient-text">Take Flight</span></h1>
+            <p style="animation: slideUp 0.8s ease-out 0.2s backwards;">Connect with developers, find expert mentors,
+                and turn your university projects into real-world startups.</p>
+            <div class="hero-btns" style="animation: slideUp 0.8s ease-out 0.3s backwards;">
+                <button class="btn btn-primary btn-lg pulse-btn" onclick="openModal('signupModal')">Start Building
+                    Now</button>
+                <button class="btn btn-secondary btn-lg" style="margin-left: 15px;"
+                    onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">Explore
+                    Features</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Everything you need to launch</h2>
+                <p>From idea to MVP, we've got the tools to help you succeed.</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card" style="animation: slideUp 0.8s ease-out 0.2s backwards;">
+                    <div class="icon-box"><i class="fas fa-rocket"></i></div>
+                    <h3>Launch Projects</h3>
+                    <p>Post your ideas, recruit team members, and manage tasks with our built-in Kanban board.</p>
+                </div>
+                <div class="feature-card" style="animation: slideUp 0.8s ease-out 0.4s backwards;">
+                    <div class="icon-box"><i class="fas fa-users"></i></div>
+                    <h3>Find Talent</h3>
+                    <p>Search for developers, designers, and mentors by skill set to build your dream team.</p>
+                </div>
+                <div class="feature-card" style="animation: slideUp 0.8s ease-out 0.6s backwards;">
+                    <div class="icon-box"><i class="fas fa-comments"></i></div>
+                    <h3>Collaborate</h3>
+                    <p>Real-time chat, file sharing, and project updates to keep everyone in sync.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-content" style="width: 400px;">
+            <div class="modal-header">
+                <h3>Welcome Back</h3>
+                <button class="close-modal" onclick="closeModal('loginModal')">&times;</button>
+            </div>
+            <form onsubmit="event.preventDefault(); submitLogin()">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="lEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="lPass" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <p style="text-align:center; margin-top:15px; color:var(--text-muted); font-size:0.9rem;">
+                No account? <a href="#" onclick="switchAuth('signup')" style="color:var(--primary)">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal-overlay">
+        <div class="modal-content" style="width: 400px;">
+            <div class="modal-header">
+                <h3>Join IdeaHub</h3>
+                <button class="close-modal" onclick="closeModal('signupModal')">&times;</button>
+            </div>
+            <form onsubmit="event.preventDefault(); submitSignup()">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="sName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="sEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="sPass" class="form-control" required>
+                </div>
+
+                <!-- V2 Fields -->
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select id="sRole" class="form-control">
+                        <option value="Student">Student</option>
+                        <option value="Developer">Developer</option>
+                        <option value="Mentor">Mentor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Skills (comma separated)</label>
+                    <input type="text" id="sSkills" class="form-control" placeholder="e.g. Python, React, Design">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Bio</label>
+                    <textarea id="sBio" class="form-control" placeholder="Short bio..." rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number (Optional)</label>
+                    <input type="tel" id="sPhone" class="form-control" placeholder="+123456789">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Portfolio Link</label>
+                    <input type="text" id="sPortfolio" class="form-control" placeholder="https://github.com/...">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+            </form>
+            <p style="text-align:center; margin-top:15px; color:var(--text-muted); font-size:0.9rem;">
+                Have an account? <a href="#" onclick="switchAuth('login')" style="color:var(--primary)">Login</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Inline script for landing-specific modal logic
+        function openAuth(type) {
+            if (type === 'login') openModal('loginModal');
+            else openModal('signupModal');
+        }
+
+        function switchAuth(to) {
+            closeModal('loginModal');
+            closeModal('signupModal');
+            setTimeout(() => openAuth(to), 200);
+        }
+
+        async function submitLogin() {
+            const e = document.getElementById('lEmail').value;
+            const p = document.getElementById('lPass').value;
+            await handleLogin(e, p);
+        }
+
+        async function submitSignup() {
+            const n = document.getElementById('sName').value;
+            const e = document.getElementById('sEmail').value;
+            const p = document.getElementById('sPass').value;
+
+            // V2 Fields
+            const r = document.getElementById('sRole').value;
+            const s = document.getElementById('sSkills').value;
+            const b = document.getElementById('sBio').value;
+            const pf = document.getElementById('sPortfolio').value;
+            const ph = document.getElementById('sPhone').value;
+
+            await handleSignup(n, e, p, r, s, b, pf, ph);
+        }
+    </script>
+</body>
+
+</html>

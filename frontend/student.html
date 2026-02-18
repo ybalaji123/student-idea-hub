@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Project Idea Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Basic css to ensure toggle works if not in style.css */
+        .form { display: none; }
+        .form.active { display: block; }
+    </style>
+</head>
+<body class="auth-body">
+
+    <div class="login-box">
+        <img src="cam_logo.png" alt="IdeaHub Logo" class="auth-logo">
+        
+        <div id="loginForm" class="form active">
+            <h2>Student Login</h2>
+            <div class="form-group">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="loginPass" placeholder="Password" required>
+            </div>
+            <button class="btn btn-primary" onclick="submitLogin()">Login</button>
+            <p>Don't have an account? <span class="toggle-link" onclick="toggleForms()">Sign Up</span></p>
+            <p style="margin-top: 10px;"><a href="index.html" class="toggle-link">Back to Home</a></p>
+        </div>
+        
+        <div id="signupForm" class="form">
+            <h2>Join the Hub</h2>
+            <div class="form-group">
+                <input type="text" id="signupUsername" placeholder="Full Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="signupEmail" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="signupPass" placeholder="Password" required>
+            </div>
+            <button class="btn btn-primary" onclick="submitSignup()">Sign Up</button>
+            <p>Already have an account? <span class="toggle-link" onclick="toggleForms()">Login</span></p>
+            <p style="margin-top: 10px;"><a href="index.html" class="toggle-link">Back to Home</a></p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+
+        function toggleForms() {
+            const login = document.getElementById('loginForm');
+            const signup = document.getElementById('signupForm');
+            
+            if (login.classList.contains('active')) {
+                login.classList.remove('active');
+                signup.classList.add('active');
+            } else {
+                signup.classList.remove('active');
+                login.classList.add('active');
+            }
+        }
+
+        async function submitLogin() {
+            const email = document.getElementById("loginEmail").value;
+            const password = document.getElementById("loginPass").value;
+
+            try {
+                const res = await fetch(`${API_URL}/student/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                    alert("Login Successful!");
+                    window.location.href = "main.html"; // Redirect to Student Dashboard
+                } else {
+                    alert(data.detail || "Login Failed");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Server error. Is the backend running?");
+            }
+        }
+
+        async function submitSignup() {
+            const name = document.getElementById("signupUsername").value;
+            const email = document.getElementById("signupEmail").value;
+            const password = document.getElementById("signupPass").value;
+
+            try {
+                const res = await fetch(`${API_URL}/student/signup`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert("Account created! Please login.");
+                    toggleForms();
+                } else {
+                    alert(data.detail || "Signup Failed");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Server error.");
+            }
+        }
+    </script>
+</body>
+</html>
