@@ -1,7 +1,4 @@
-// --- CONFIG ---
-// CHANGE THIS URL TO YOUR RENDER BACKEND URL AFTER DEPLOYMENT
-// Example: const API_URL = "https://your-app-name.onrender.com";
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "https://student-idea-hub.onrender.com";
 
 // --- GLOBAL STATE ---
 let currentUser = JSON.parse(localStorage.getItem("user"));
